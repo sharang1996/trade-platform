@@ -1,32 +1,43 @@
 import exception.UnsupportedInputFormatException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class PositionBook {
 
+    Set<String> cancelledIdSet = new HashSet<>();
 
     public static void main(String[] args) throws UnsupportedInputFormatException {
 
         PositionBook positionBook = new PositionBook();
-        Scanner s = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         ArrayList<String[]> rows = new ArrayList<>();
 
-        while (s.hasNextLine()){
-            String line = s.nextLine();
+        while (scanner.hasNextLine()){
+            String line = scanner.nextLine();
             if ("".equals(line)) {
                 break;
             }
             String[] row = line.split("\\s+");
             if(!positionBook.isValidRow(row)) throw new UnsupportedInputFormatException();
-            rows.add(row);
+
+            //Identifying cancelled trade events when accepting inputs
+            if(!positionBook.cancelledIdSet.contains(row[0]) && !row[1].equals("CANCEL")) rows.add(row);
+            else positionBook.cancelledIdSet.add(row[0]);
         }
+
+        for(String[] row: rows){
+
+        }
+
 
 
     }
 
-    private boolean isValidRow(String[] row) throws UnsupportedInputFormatException {
+    private boolean isValidRow(String[] row) {
         if(row.length != 5) return false;
 
         //Other validations around field values
