@@ -21,6 +21,8 @@ public class TradeRecordsParserImpl implements RecordsParser{
             String security = row[3];
             int quantity = Integer.parseInt(row[4]);
 
+            //ToDo: validate above extracted fields using the ValidationService
+
             if(cancelledSet.contains(id)) continue;
 
             //Aggregating by a combination of the account name and security
