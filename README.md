@@ -14,3 +14,18 @@ should keep the data in memory (not in a database or in the file system)
 *A security is a tradable asset of any kind. Examples of securities are debt securities (such as
 banknotes, bonds and debentures), equity securities, (e.g., common stocks) and derivative
 contracts, such as forwards, futures, options and swaps.
+
+### Assumptions
+
+- A valid security is alphanumeric, and is less than 10 characters long.
+- A valid account his alphanumeric, and is always 4 characters long.
+- A trade event is always "BUY", "SELL" or "CANCEL".
+- A trade id is a positive integer less than 2147483648 (integer limit).
+- Input stream is terminated by subsequent new line characters(A single one could mean we have more trade events to follow).
+
+### Usage
+
+- Install java(11), maven
+- Run mvn clean install
+- Invoke the application by running PositionBookRunner
+- Input all the trades to make with fields space seperated, trades line seperated.
