@@ -1,5 +1,7 @@
 package service;
 
+import java.util.regex.Pattern;
+
 public class ValidationService {
     public boolean isValidRow(String[] row) {
         if(row.length != 5) return false;
@@ -23,22 +25,28 @@ public class ValidationService {
     }
 
     public boolean isValidSecurity(String columnValue) {
-        //ToDo: Add validation around the Security field
-        return true;
+        Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+        boolean hasSpecialChar = p.matcher(columnValue).find();
+        return !hasSpecialChar && columnValue.length() < 10;
     }
 
     public boolean isValidAccount(String columnValue) {
-        //ToDo: Add validation around the Account field
-        return true;
+        Pattern p = Pattern.compile("[^a-zA-Z0-9]");
+        boolean hasSpecialChar = p.matcher(columnValue).find();
+        return !hasSpecialChar && columnValue.length() == 4;
     }
 
     public boolean isValidTradeEvent(String columnValue) {
-        //ToDo: Add validation around the Event field
-        return true;
+        return columnValue.equals("BUY") || columnValue.equals("SELL") || columnValue.equals("CANCEL");
     }
 
     public boolean isValidTradeId(String columnValue) {
-        //ToDo: Add validation around the id field
+        try{
+            int id = Integer.parseInt(columnValue);
+            if(id <= 0) return false;
+        }catch(NumberFormatException e){
+            return false;
+        }
         return true;
     }
 }
