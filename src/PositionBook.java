@@ -1,6 +1,7 @@
 import exception.UnsupportedInputFormatException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PositionBook {
 
@@ -56,7 +57,7 @@ public class PositionBook {
 
         }
 
-        for(String key : positionBook.accountSecurityCount.keySet()){
+        for(String key : positionBook.accountSecurityCount.keySet().stream().sorted().collect(Collectors.toList())){
             System.out.println(key.split("_")[0] + " " +
                     key.split("_")[1] + " "+
                     positionBook.accountSecurityCount.get(key));
