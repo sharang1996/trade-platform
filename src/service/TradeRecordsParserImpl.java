@@ -10,7 +10,6 @@ import java.util.Set;
 public class TradeRecordsParserImpl implements RecordsParser{
 
     Map<String, Integer> accountSecurityCount = new HashMap<>();
-    ValidationService validationService = new ValidationService();
 
     @Override
     public Map<String, Integer> parse(Set<String> cancelledSet, List<String[]> rows) throws UnsupportedInputFormatException {
@@ -20,11 +19,7 @@ public class TradeRecordsParserImpl implements RecordsParser{
             String tradeEvent = row[1];
             String account = row[2];
             String security = row[3];
-
-            if(!validationService.isValidQuantity(row[4])) throw new UnsupportedInputFormatException();
             int quantity = Integer.parseInt(row[4]);
-
-            //ToDo: validate above extracted fields using the ValidationService
 
             if(cancelledSet.contains(id)) continue;
 
