@@ -1,4 +1,6 @@
 import exception.UnsupportedInputFormatException;
+import service.RecordsParser;
+import service.TradeRecordsParserImpl;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -6,12 +8,12 @@ import java.util.stream.Collectors;
 public class PositionBook {
 
     Set<String> cancelledIdSet = new HashSet<>();
-    Map<String, Integer> accountSecurityCount = new HashMap<>();
 
     public static void main(String[] args) throws UnsupportedInputFormatException {
 
         PositionBook positionBook = new PositionBook();
         Scanner scanner = new Scanner(System.in);
+        RecordsParser parser = new TradeRecordsParserImpl();
 
         ArrayList<String[]> rows = new ArrayList<>();
 
@@ -28,39 +30,12 @@ public class PositionBook {
             else positionBook.cancelledIdSet.add(row[0]);
         }
 
-        for(String[] row: rows){
+        Map<String, Integer> accountSecurityCount = parser.parse(positionBook.cancelledIdSet, rows);
 
-            String id = row[0];
-            String tradeEvent = row[1];
-            String account = row[2];
-            String security = row[3];
-            int quantity = Integer.parseInt(row[4]);
-
-            if(positionBook.cancelledIdSet.contains(id)) continue;
-
-            //Aggregating by a combination of the account name and security
-            String key = account.concat("_").concat(security);
-            switch(tradeEvent){
-                case "BUY":
-                    if(positionBook.accountSecurityCount.containsKey(key))
-                        positionBook.accountSecurityCount.put(key, positionBook.accountSecurityCount.get(key)+quantity);
-                    else positionBook.accountSecurityCount.put(key, quantity);
-                    break;
-
-                case "SELL":
-                    if(positionBook.accountSecurityCount.containsKey(key) &&
-                            positionBook.accountSecurityCount.get(key) >= quantity )
-                        positionBook.accountSecurityCount.put(key, positionBook.accountSecurityCount.get(key)-quantity);
-                    else throw new UnsupportedInputFormatException();
-                    break;
-            }
-
-        }
-
-        for(String key : positionBook.accountSecurityCount.keySet().stream().sorted().collect(Collectors.toList())){
+        for(String key : accountSecurityCount.keySet().stream().sorted().collect(Collectors.toList())){
             System.out.println(key.split("_")[0] + " " +
                     key.split("_")[1] + " "+
-                    positionBook.accountSecurityCount.get(key));
+                    accountSecurityCount.get(key));
         }
 
     }
