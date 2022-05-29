@@ -1,8 +1,5 @@
 import exception.UnsupportedInputFormatException;
-import service.AggregatedTradePositionsPrinter;
-import service.Printer;
-import service.RecordsParser;
-import service.TradeRecordsParserImpl;
+import service.*;
 
 import java.util.*;
 
@@ -17,6 +14,7 @@ public class PositionBook {
         Scanner scanner = new Scanner(System.in);
         RecordsParser parser = new TradeRecordsParserImpl();
         Printer printer = new AggregatedTradePositionsPrinter();
+        ValidationService validationService = new ValidationService();
 
         ArrayList<String[]> rows = new ArrayList<>();
 
@@ -26,7 +24,7 @@ public class PositionBook {
                 break;
             }
             String[] row = line.split("\\s+");
-            if(!positionBook.isValidRow(row)) throw new UnsupportedInputFormatException();
+            if(!validationService.isValidRow(row)) throw new UnsupportedInputFormatException();
 
             //Identifying cancelled trade events when accepting inputs
             if(!positionBook.cancelledIdSet.contains(row[0]) && !row[1].equals("CANCEL")) rows.add(row);
@@ -35,42 +33,5 @@ public class PositionBook {
 
         Map<String, Integer> accountSecurityCount = parser.parse(positionBook.cancelledIdSet, rows);
         printer.display(accountSecurityCount);
-    }
-
-
-    private boolean isValidRow(String[] row) {
-        if(row.length != 5) return false;
-
-        //Other validations around field values
-        return isValidTradeId(row[0]) &&
-                isValidTradeEvent(row[1]) &&
-                isValidAccount(row[2]) &&
-                isValidSecurity(row[3]) &&
-                isValidQuantity(row[4]);
-    }
-
-    private boolean isValidQuantity(String columnValue) {
-        //ToDo: Add validation around the quantity field
-        return true;
-    }
-
-    private boolean isValidSecurity(String columnValue) {
-        //ToDo: Add validation around the Security field
-        return true;
-    }
-
-    private boolean isValidAccount(String columnValue) {
-        //ToDo: Add validation around the Account field
-        return true;
-    }
-
-    private boolean isValidTradeEvent(String columnValue) {
-        //ToDo: Add validation around the Event field
-        return true;
-    }
-
-    private boolean isValidTradeId(String columnValue) {
-        //ToDo: Add validation around the id field
-        return true;
     }
 }
