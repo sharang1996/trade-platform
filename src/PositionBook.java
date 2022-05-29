@@ -1,9 +1,10 @@
 import exception.UnsupportedInputFormatException;
+import service.AggregatedTradePositionsPrinter;
+import service.Printer;
 import service.RecordsParser;
 import service.TradeRecordsParserImpl;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PositionBook {
 
@@ -11,9 +12,11 @@ public class PositionBook {
 
     public static void main(String[] args) throws UnsupportedInputFormatException {
 
+        //If using a framework based on spring, the service dependencies will be autowired(dependency inversion)
         PositionBook positionBook = new PositionBook();
         Scanner scanner = new Scanner(System.in);
         RecordsParser parser = new TradeRecordsParserImpl();
+        Printer printer = new AggregatedTradePositionsPrinter();
 
         ArrayList<String[]> rows = new ArrayList<>();
 
@@ -31,13 +34,7 @@ public class PositionBook {
         }
 
         Map<String, Integer> accountSecurityCount = parser.parse(positionBook.cancelledIdSet, rows);
-
-        for(String key : accountSecurityCount.keySet().stream().sorted().collect(Collectors.toList())){
-            System.out.println(key.split("_")[0] + " " +
-                    key.split("_")[1] + " "+
-                    accountSecurityCount.get(key));
-        }
-
+        printer.display(accountSecurityCount);
     }
 
 
