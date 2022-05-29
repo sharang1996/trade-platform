@@ -1,13 +1,11 @@
 import exception.UnsupportedInputFormatException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class PositionBook {
 
     Set<String> cancelledIdSet = new HashSet<>();
+    Map<String, Integer> accountSecurityCount = new HashMap<>();
 
     public static void main(String[] args) throws UnsupportedInputFormatException {
 
@@ -31,11 +29,41 @@ public class PositionBook {
 
         for(String[] row: rows){
 
+            String id = row[0];
+            String tradeEvent = row[1];
+            String account = row[2];
+            String security = row[3];
+            int quantity = Integer.parseInt(row[4]);
+
+            if(positionBook.cancelledIdSet.contains(id)) continue;
+
+            //Aggregating by a combination of the account name and security
+            String key = account.concat("_").concat(security);
+            switch(tradeEvent){
+                case "BUY":
+                    if(positionBook.accountSecurityCount.containsKey(key))
+                        positionBook.accountSecurityCount.put(key, positionBook.accountSecurityCount.get(key)+quantity);
+                    else positionBook.accountSecurityCount.put(key, quantity);
+                    break;
+
+                case "SELL":
+                    if(positionBook.accountSecurityCount.containsKey(key) &&
+                            positionBook.accountSecurityCount.get(key) >= quantity )
+                        positionBook.accountSecurityCount.put(key, positionBook.accountSecurityCount.get(key)-quantity);
+                    else throw new UnsupportedInputFormatException();
+                    break;
+            }
+
         }
 
-
+        for(String key : positionBook.accountSecurityCount.keySet()){
+            System.out.println(key.split("_")[0] + " " +
+                    key.split("_")[1] + " "+
+                    positionBook.accountSecurityCount.get(key));
+        }
 
     }
+
 
     private boolean isValidRow(String[] row) {
         if(row.length != 5) return false;
