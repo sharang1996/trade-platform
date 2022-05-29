@@ -13,7 +13,12 @@ public class ValidationService {
     }
 
     public boolean isValidQuantity(String columnValue) {
-        //ToDo: Add validation around the quantity field
+        try{
+            int quantity = Integer.parseInt(columnValue);
+            if(quantity < 0) return false;
+        }catch(NumberFormatException e){
+            return false;
+        }
         return true;
     }
 
